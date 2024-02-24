@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/jquery-ui.structure.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui/jquery-ui.theme.css') }}">
+
+    <title>
+        {% block title %}
+        GENERIC TITLE
+        {% endblock %}
+    </title>
+
+</head>
+<body>
+    
+    <div id="container">
+        {% block page_title %}
+
+        {% endblock page_title %}
+
+        {% block content %}
+
+        {% endblock %}
+    </div>
+    
+    <script src="{{ url_for('static', filename='htmx.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-3.7.1.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='jquery-ui/jquery-ui.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='main.js') }}" type="text/javascript"></script>
+</body>
+</html>
