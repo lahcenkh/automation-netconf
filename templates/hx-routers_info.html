@@ -1,0 +1,35 @@
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div id="flash-messages">
+        <button onclick="remove_flash()">X</button>
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
+<table>
+    <thead>
+        <tr>
+            <th>Router Name</th>
+            <th>Router IP Address</th>
+            <th>Router Technology</th>
+            <th>Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if Error not in routers %}
+            {% for router in routers %}
+            <tr>
+                <td>{{router["router_name"]}}</td>
+                <td>{{router["router_ipaddress"]}}</td>
+                <td>{{router["router_technology"]}}</td>
+                <td>
+                    <button onclick="open_diag()" hx-target="#update-from" hx-swap="innerHTML" hx-get="/edit-router_info?id={{router['id']}}">Edit</button>
+                    <button hx-target="#router-info" hx-delete="/delete-router_info?id={{router['id']}}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

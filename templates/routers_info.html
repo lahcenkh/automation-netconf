@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    routers info
+{% endblock %}
+
+{% block page_title %}
+<h2 class="title-page">Routers Inforamtion</h2>
+{% endblock page_title %}
+
+{% block content %}
+<button hx-get="/add-router_info" onclick="open_diag()" hx-target="#update-from" hx-swap="innerHTML">add router</button>
+
+<div id="router-info" hx-get="/get-routers_info"  hx-trigger="load">
+    <!-- router info table -->
+</div>
+
+<dialog id="myDialog">
+    <button onclick="close_diag()">X</button>
+    <div id="update-from"></div>
+</dialog>
+{% endblock %}

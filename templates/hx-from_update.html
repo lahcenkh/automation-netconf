@@ -1,0 +1,49 @@
+<form>
+    <label for="routerName">Router Name:</label>
+    <input type="hidden" id="id" name="id"  value="{{router['id']}}"/>
+    
+    <input type="text" id="routerName" name="router_name" placeholder="Enter Router Name", value="{{router['router_name']}}"/>
+    
+    <br/>
+    <label for="routerIPAddress">Router IP Address:</label>
+    <input type="text" id="routerIPAddress" name="router_ipaddress" value="{{router['router_ipaddress']}}" placeholder="Enter Router IP Address"/>
+    
+    <br/>
+    <label for="routerTechnology">Router Technology:</label>
+    <select id="routerTechnology" name="router_technology">
+        {% if  router['router_technology'] == "HUAWEI" %}
+            <option value="" disabled>Select a technology</option>
+            <option value="HUAWEI" selected>Huawei</option>
+            <option value="CISCO">Cisco</option>
+            <option value="NOKIA">Nokia</option>
+            <option value="ZTE">ZTE</option>
+
+        {% elif  router['router_technology'] == "NOKIA" %}
+            <option value="" disabled>Select a technology</option>
+            <option value="HUAWEI">Huawei</option>
+            <option value="CISCO">Cisco</option>
+            <option value="NOKIA" selected>Nokia</option>
+            <option value="ZTE">ZTE</option>
+        {% elif  router['router_technology'] == "ZTE" %}
+            <option value="" disabled>Select a technology</option>
+            <option value="HUAWEI" >Huawei</option>
+            <option value="CISCO">Cisco</option>
+            <option value="NOKIA">Nokia</option>
+            <option value="ZTE" selected>ZTE</option>
+        {% elif  router['router_technology'] == "CISCO" %}
+            <option value="" disabled>Select a technology</option>
+            <option value="HUAWEI">Huawei</option>
+            <option value="CISCO" selected>Cisco</option>
+            <option value="NOKIA">Nokia</option>
+            <option value="ZTE">ZTE</option>
+        {% else %}
+            <option value="" disabled selected>Select a technology</option>
+            <option value="HUAWEI" >Huawei</option>
+            <option value="CISCO">Cisco</option>
+            <option value="NOKIA">Nokia</option>
+            <option value="ZTE">ZTE</option>
+        {% endif %}
+    </select>
+    <br/>
+    <button onclick="close_diag()" hx-target="#router-info" hx-post="/edit-router_info">update</button>
+</form>
