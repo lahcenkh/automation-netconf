@@ -1,5 +1,15 @@
 {% extends 'layout.html' %}
 
+{% macro form_generator(input) %}
+    {{input.label}}
+    {{input()}}
+    {% if input.errors %}
+        {% for error in input.errors %}
+            {{ error }}
+            {% endfor %}
+    {% endif %}
+{% endmacro %}
+
 {% block title %}
     Home Page
 {% endblock %}
@@ -10,4 +20,16 @@
 
 {% block content %}
     <p>Home page</p>
+    <br>
+    {% if data %}
+        {{data}}
+    {% else %}
+        <form method="post">
+            {{form.hidden_tag()}}
+            {{form_generator(form.router_name)}}
+            {{form_generator(form.router_ipaddress)}}
+            {{form_generator(form.router_technology)}}
+            {{form.submit()}}
+        </form>
+    {% endif %}
 {% endblock %}

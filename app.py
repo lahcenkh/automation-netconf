@@ -1,12 +1,20 @@
 from flask import Flask, url_for, render_template, request, flash, redirect, Response
 from database.db_functions import *
+from utils.forms import Add_router_form
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "@njbNK4654NKN#"
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    form_add = Add_router_form()
+    data = {}
+    if form_add.validate_on_submit():
+        data = {"router_name": form_add.router_name.data,
+        "router_ipaddress": form_add.router_ipaddress.data,
+        "router_technology": form_add.router_technology.data}
+
+    return render_template("index.html", form=form_add, data=data)
 
 @app.route("/routers_info")
 def routers_info():
@@ -72,3 +80,8 @@ def add_router_info():
             flash("failed")
         routers = get_db_info(query='SELECT * FROM routers_info')
         return render_template("hx-routers_info.html", routers=routers)      
+
+# 
+@app.route("/interfaces")
+def interfaces():
+    return render_template("interfaces.html")
