@@ -1,0 +1,32 @@
+<table>
+    <thead>
+        <tr>
+            <th>Router Name</th>
+            <th>Interface</th>
+            <th>Description</th>
+            <th>Admin State</th>
+            <th>Operation State</th>
+            <th>Mac Address</th>
+            <th>Speed</th>
+            <th>IP Address</th>
+            <th>Mask</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if Error not in interfaces %}
+            {% for interface in interfaces %}
+            <tr>
+                <td>{{interface["router_name"]}}</td>
+                <td>{{interface["interface_name"]}}</td>
+                <td>{{interface["description"]}}</td>
+                <td>{{interface["admin_state"]}}</td>
+                <td>{{interface["operation_state"]}}</td>
+                <td>{{interface["mac_address"]}}</td>
+                <td>{{interface["speed"]}}</td>
+                <td>{{interface["ipaddress"]}}</td>
+                <td>{{interface["mask"]}}</td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
