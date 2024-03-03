@@ -1,6 +1,7 @@
 from flask import Flask, url_for, render_template, request, flash, redirect, Response
 from database.db_functions import *
 from utils.forms import Add_router_form
+from utils.get_interfaces import get_routers_interfaces_state
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "@njbNK4654NKN#"
@@ -81,7 +82,29 @@ def add_router_info():
         routers = get_db_info(query='SELECT * FROM routers_info')
         return render_template("hx-routers_info.html", routers=routers)      
 
-# 
-@app.route("/interfaces")
+@app.route("/get-interfaces_info")
+def get_interfaces_info():
+    routers_interfaces = get_db_info(query='SELECT * FROM interfaces')
+    return render_template("hx-interfaces.html", interfaces=routers_interfaces)
+
+
+@app.route("/interfaces", methods=["GET", "POST"])
 def interfaces():
-    return render_template("interfaces.html")
+    if request.method == "GET":
+        return render_template("interfaces.html")
+    
+    elif request.method == "POST":
+        routers = get_db_info(query='SELECT * FROM routers_info')
+        interfaces_info = get_routers_interfaces_state(routers)
+
+        update_interfaces_table(query="DELETE FROM interfaces")
+        for interface in interfaces_info:
+            query_interfaces = f"""
+            INSERT INTO interfaces (router_name, interface_name, description, admin_state, operation_state, mac_address, speed, ipaddress, mask)
+            VALUES ('{interface["router_name"]}', '{interface["interface_name"]}', '{interface["description"]}', '{interface["admin_state"]}','{interface["operation_state"]}','{interface["mac_address"]}','{interface["speed"]}', '{interface["ipaddress"]}','{interface["mask"]}')
+            """
+            update_interfaces_table(query_interfaces)
+        
+        routers_interfaces = get_db_info(query='SELECT * FROM interfaces')
+        return render_template("hx-interfaces.html", interfaces=routers_interfaces)
+

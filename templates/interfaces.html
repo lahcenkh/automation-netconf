@@ -10,4 +10,18 @@
 
 {% block content %}
 <p>interfaces report</p>
+<button hx-post="/interfaces" hx-target="#interfaces-info"
+hx-trigger="click"
+hx-target="#interfaces-info"
+hx-indicator="#loading"
+hx-vals='{"limit": 0.2}'>get interfaces info</button>
+<br>
+<span class="htmx-indicator" id="loading">
+    <p>waiting...</p><br>
+    <img class="loading-gif" src="{{ url_for('static', filename='waiting.gif') }}" width="30px" height="30px">
+</span>
+
+<div id="interfaces-info" hx-get="/get-interfaces_info"  hx-trigger="load">
+    <!-- interfaces info table -->
+</div>
 {% endblock %}

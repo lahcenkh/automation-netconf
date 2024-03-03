@@ -73,3 +73,20 @@ def add_post_db(query):
         print(f"Error Happened:\n {e}")
         connection.close()
         return "Error!"
+    
+def update_interfaces_table(query):
+    try:
+        connection = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
+        # Create a cursor object
+        cursor = connection.cursor()
+        # Insert data into the table
+        cursor.execute(query)
+        # Commit the changes
+        connection.commit()
+        # Close the connection
+        connection.close()
+        return "added"
+    except Exception as e:
+        print(f"Error Happened:\n {e}")
+        connection.close()
+        return "Error!"
