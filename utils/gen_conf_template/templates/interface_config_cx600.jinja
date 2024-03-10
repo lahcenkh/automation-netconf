@@ -1,0 +1,17 @@
+<config>
+    <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <interface xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" nc:operation="replace">
+            <name>{{interface_info.interface_name}}</name>
+            <description>{{interface_info.description}}</description>
+            <enabled>{{interface_info.enabled}}</enabled>
+            {% if "None" not in interface_info.ipaddress %}
+            <ipv4 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+            <address>
+                <ip>{{interface_info.ipaddress}}</ip>
+                <prefix-length>{{interface_info.mask}}</prefix-length>
+            </address>
+            </ipv4>
+            {% endif %}
+        </interface>
+    </interfaces>
+</config>
