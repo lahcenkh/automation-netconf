@@ -144,11 +144,14 @@ def edit_interfaces_info():
             result = edit_interface_config(router_ipaddress=router["router_ipaddress"],port=830 , router_technology=router["router_technology"],username="lahcen", password="Netconf@2021",template=template)
 
         if "<ok/>" in str(result):
-            print("ok")
-            inter = get_router_interface_info(router,new_interface_info.get("interface_name"))
-            print(inter)
+            inter_new = get_router_interface_info(router,new_interface_info.get("interface_name"))[0]
+            query = f"""UPDATE interfaces
+                        SET router_name = '{inter_new["router_name"]}', router_technology = '{inter_new["router_technology"]}', interface_name = '{inter_new["interface_name"]}', description = '{inter_new["description"]}' , admin_state = '{inter_new["admin_state"]}', description = '{inter_new["description"]}', operation_state = '{inter_new["operation_state"]}', speed = '{inter_new["speed"]}', mac_address = '{inter_new["mac_address"]}', ipaddress = '{inter_new["ipaddress"]}', mask = '{inter_new["mask"]}'
+                        WHERE router_name = '{inter_new["router_name"]}' AND interface_name = '{inter_new["interface_name"]}';"""
+            update_interfaces_table(query)
         else:
             print(result)
 
-        return render_template("interfaces.html")
+        routers_interfaces = get_db_info(query='SELECT * FROM interfaces')
+        return render_template("hx-interfaces.html", interfaces=routers_interfaces)
 

@@ -23,5 +23,5 @@
     <label for="mask">Mask:</label>
     <input type="text" name="mask" id="mask" value="{{interface_info['mask']}}"/>
     <br/>
-    <button onclick="close_diag()" hx-post="/interfaces/edite">Edit</button>
+    <button onclick="close_diag()" hx-target="#interfaces-info" hx-post="/interfaces/edite">Edit</button>
 </form>
