@@ -1,6 +1,7 @@
 from ncclient import manager
 import xmltodict
 
+
 def interfaces_status(router_ipaddress,router_technology,port,username,password):
     try:
         if str(router_technology).lower() == "huawei".lower():
@@ -58,15 +59,20 @@ def interfaces_status(router_ipaddress,router_technology,port,username,password)
                 if interface.get("ifName") not in interfaces_huawei:
                         interfaces_huawei[interface.get("ifName")] = {}
                         interfaces_huawei[interface.get("ifName")]["router_name"] = data_inter_dict["data"]["system"]["systemInfo"]["sysName"]
+                        interfaces_huawei[interface.get("ifName")]["router_technology"] = router_technology
                         interfaces_huawei[interface.get("ifName")]["interface_name"] = interface.get("ifName")
                         interfaces_huawei[interface.get("ifName")]["admin_state"] = interface.get("ifAdminStatus")
                         interfaces_huawei[interface.get("ifName")]["description"] = interface.get("ifDescr")
                         interfaces_huawei[interface.get("ifName")]["operation_state"] = interface.get("ifDynamicInfo").get("ifOperStatus")
                         interfaces_huawei[interface.get("ifName")]["speed"] = interface.get("ifDynamicInfo").get("ifOperSpeed")
                         interfaces_huawei[interface.get("ifName")]["mac_address"] = interface.get("ifDynamicInfo").get("ifOperMac")
-                        interfaces_huawei[interface.get("ifName")]["ipaddress"] = interface.get("mainIpAddr").get("ifIpAddr")
-                        interfaces_huawei[interface.get("ifName")]["mask"] = interface.get("mainIpAddr").get("subnetMask")
-        
+                        if interface.get("mainIpAddr").get("ifIpAddr") == "0.0.0.0" or interface.get("mainIpAddr").get("subnetMask") == "0.0.0.0":
+                            interfaces_huawei[interface.get("ifName")]["ipaddress"] = "None"
+                            interfaces_huawei[interface.get("ifName")]["mask"] = "None"
+                        else:
+                            interfaces_huawei[interface.get("ifName")]["ipaddress"] = interface.get("mainIpAddr").get("ifIpAddr")
+                            interfaces_huawei[interface.get("ifName")]["mask"] = interface.get("mainIpAddr").get("subnetMask")
+            m.close_session()
             return interfaces_huawei
         
         elif str(router_technology).lower() == "cisco".lower():
@@ -99,6 +105,7 @@ def interfaces_status(router_ipaddress,router_technology,port,username,password)
                 if interface.get("name") not in interfaces_cisco:
                         interfaces_cisco[interface.get("name")] = {}
                         interfaces_cisco[interface.get("name")]["router_name"] = data_inter_dict["data"]["native"]["hostname"]
+                        interfaces_cisco[interface.get("name")]["router_technology"] = router_technology
                         interfaces_cisco[interface.get("name")]["interface_name"] = interface.get("name")
                         interfaces_cisco[interface.get("name")]["description"] = interface.get("description")
                         
@@ -116,14 +123,15 @@ def interfaces_status(router_ipaddress,router_technology,port,username,password)
                         interfaces_cisco[inter_key]["operation_state"] = interface_state["oper-status"]
                         interfaces_cisco[inter_key]["mac_address"] = interface_state["phys-address"]
                         interfaces_cisco[inter_key]["speed"] = interface_state["speed"]
-
+            m.close_session()
             return interfaces_cisco
+        else:
+            return "not supported"
         
     except Exception as e:
         print(f"Error:\n{e}")
-        return "Error!"
-    finally:
-        m.close_session()
+        return "Error"
+        
 
 def get_routers_interfaces_state(routers):
     interfaces = []
@@ -134,8 +142,8 @@ def get_routers_interfaces_state(routers):
             result = interfaces_status(router_ipaddress=router["router_ipaddress"], router_technology=router["router_technology"], port=830,username="lahcen", password="Netconf@2021")
         else:
             result = "Not supported"
-        
-        for inter in result.keys():
-            interfaces.append(result[inter])
+        if "Error" not in result:
+            for inter in result.keys():
+                interfaces.append(result[inter])
         
     return interfaces

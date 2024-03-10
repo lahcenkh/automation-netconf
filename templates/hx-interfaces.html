@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th>Router Name</th>
+            <th>Router Technology</th>
             <th>Interface</th>
             <th>Description</th>
             <th>Admin State</th>
@@ -10,6 +11,7 @@
             <th>Speed</th>
             <th>IP Address</th>
             <th>Mask</th>
+            <th>Operation</th>
         </tr>
     </thead>
     <tbody>
@@ -17,6 +19,7 @@
             {% for interface in interfaces %}
             <tr>
                 <td>{{interface["router_name"]}}</td>
+                <td>{{interface["router_technology"]}}</td>
                 <td>{{interface["interface_name"]}}</td>
                 <td>{{interface["description"]}}</td>
                 <td>{{interface["admin_state"]}}</td>
@@ -25,6 +28,9 @@
                 <td>{{interface["speed"]}}</td>
                 <td>{{interface["ipaddress"]}}</td>
                 <td>{{interface["mask"]}}</td>
+                <td>
+                    <button onclick="open_diag()" hx-target="#update-from" hx-swap="innerHTML" hx-get="/interfaces/edite?router_name={{interface['router_name']}}&interface_name={{interface['interface_name']}}">Edite</button>
+                </td>
             </tr>
             {% endfor %}
         {% endif %}

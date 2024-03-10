@@ -45,5 +45,17 @@
         {% endif %}
     </select>
     <br/>
+    <select id="routerTechnology" name="netconf_connection" required>
+        <option value="" disabled selected>Select a technology</option>
+        <option value="junos" >Juniper</option>
+        <option value="csr">Cisco CSR</option>
+        <option value="nexus">Nexus</option>
+        <option value="iosxe">IOS XE</option>
+        <option value="iosxr">IOS XR</option>
+        <option value="alu">Nokia</option>
+        <option value="huaweiyang">Huawei</option>
+        <option value="default">Any Thing</option>
+    </select>
+    <br/>
     <button onclick="close_diag()" hx-target="#router-info" hx-post="/edit-router_info">update</button>
 </form>

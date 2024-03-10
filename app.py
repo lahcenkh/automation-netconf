@@ -2,6 +2,9 @@ from flask import Flask, url_for, render_template, request, flash, redirect, Res
 from database.db_functions import *
 from utils.forms import Add_router_form
 from utils.get_interfaces import get_routers_interfaces_state
+from utils.gen_conf_template.template_generator import cisco_interface_basic_config, huawei_interface_basic_config
+from utils.configure_interface import edit_interface_config
+from utils.cirde_to_mask import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "@njbNK4654NKN#"
@@ -39,7 +42,7 @@ def edit_router_info():
         r = request.form
         update_query = f"""
                         UPDATE routers_info
-                        SET router_name = '{r["router_name"]}', router_ipaddress = '{r["router_ipaddress"]}', router_technology = '{r["router_technology"]}'
+                        SET router_name = '{r["router_name"]}', router_ipaddress = '{r["router_ipaddress"]}', router_technology = '{r["router_technology"]}', netconf_connection = '{r["netconf_connection"]}' 
                         WHERE id = '{r["id"]}';
                         """
         db_resulte = edit_post_db(query=update_query)
@@ -71,8 +74,8 @@ def add_router_info():
     elif request.method == "POST":
         r_info = request.form
         add_router_query = f"""
-                            INSERT INTO routers_info (router_name, router_ipaddress, router_technology)
-                            VALUES ('{r_info["router_name"]}', '{r_info["router_ipaddress"]}', '{r_info["router_technology"]}')
+                            INSERT INTO routers_info (router_name, router_ipaddress, router_technology, netconf_connection)
+                            VALUES ('{r_info["router_name"]}', '{r_info["router_ipaddress"]}', '{r_info["router_technology"]}', '{r_info["netconf_connection"]}')
                             """
         db_resulte = add_post_db(query=add_router_query)
         if db_resulte == "added":
@@ -80,7 +83,7 @@ def add_router_info():
         else:
             flash("failed")
         routers = get_db_info(query='SELECT * FROM routers_info')
-        return render_template("hx-routers_info.html", routers=routers)      
+        return render_template("hx-routers_info.html", routers=routers)    
 
 @app.route("/get-interfaces_info")
 def get_interfaces_info():
@@ -100,11 +103,50 @@ def interfaces():
         update_interfaces_table(query="DELETE FROM interfaces")
         for interface in interfaces_info:
             query_interfaces = f"""
-            INSERT INTO interfaces (router_name, interface_name, description, admin_state, operation_state, mac_address, speed, ipaddress, mask)
-            VALUES ('{interface["router_name"]}', '{interface["interface_name"]}', '{interface["description"]}', '{interface["admin_state"]}','{interface["operation_state"]}','{interface["mac_address"]}','{interface["speed"]}', '{interface["ipaddress"]}','{interface["mask"]}')
+            INSERT INTO interfaces (router_name, interface_name, description, admin_state, operation_state, mac_address, speed, ipaddress, mask, router_technology)
+            VALUES ('{interface["router_name"]}', '{interface["interface_name"]}', '{interface["description"]}', '{interface["admin_state"]}','{interface["operation_state"]}','{interface["mac_address"]}','{interface["speed"]}', '{interface["ipaddress"]}','{interface["mask"]}','{interface["router_technology"]}')
             """
             update_interfaces_table(query_interfaces)
         
         routers_interfaces = get_db_info(query='SELECT * FROM interfaces')
         return render_template("hx-interfaces.html", interfaces=routers_interfaces)
+
+
+@app.route("/interfaces/edite", methods=["GET", "POST"])
+def edit_interfaces_info():
+    if request.method == "GET":
+        inter_to_edite = request.args.to_dict()
+        interface_info = get_db_info(query=f'SELECT * FROM interfaces WHERE router_name = "{inter_to_edite["router_name"]}" AND interface_name = "{inter_to_edite["interface_name"]}"')
+        return render_template("hx-edit_form_interface.html", interface_info=interface_info[0])
+    elif request.method == "POST":
+        new_interface_info = request.form.to_dict()
+        router = get_db_info(query=f'SELECT * FROM routers_info WHERE router_name = "{new_interface_info["router_name"]}"')[0]
+        
+        if router["router_technology"] == "HUAWEI":
+            interface_info = {
+                                "interface_name":new_interface_info.get("interface_name"),
+                                "description":new_interface_info.get("description"),
+                                "ipaddress":new_interface_info.get("ipaddress"),
+                                "mask": cidr_to_netmask(new_interface_info.get("mask")),
+                                "enabled":str(new_interface_info.get("admin_state")),
+                            }
+            template = huawei_interface_basic_config(interface_info)
+            result = edit_interface_config(router_ipaddress=router["router_ipaddress"],port=22 , router_technology=router["router_technology"],username="lahcen", password="Netconf@2021",template=template)
+        elif router["router_technology"] == "CISCO":
+            interface_info = {
+                                "interface_name":new_interface_info.get("interface_name"),
+                                "description":new_interface_info.get("description"),
+                                "ipaddress":new_interface_info.get("ipaddress"),
+                                "mask":new_interface_info.get("mask"),
+                                "enabled":str(new_interface_info.get("admin_state")),
+                            }
+            template = cisco_interface_basic_config(interface_info)
+            result = edit_interface_config(router_ipaddress=router["router_ipaddress"],port=830 , router_technology=router["router_technology"],username="lahcen", password="Netconf@2021",template=template)
+
+        if "<ok/>" == result:
+            print("ok")
+        else:
+            print(result)
+
+        return render_template("interfaces.html")
 

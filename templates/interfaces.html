@@ -20,8 +20,22 @@ hx-vals='{"limit": 0.2}'>get interfaces info</button>
     <p>waiting...</p><br>
     <img class="loading-gif" src="{{ url_for('static', filename='waiting.gif') }}" width="30px" height="30px">
 </span>
-
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+    <div id="flash-messages">
+        <button onclick="remove_flash()">X</button>
+        {% for message in messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
 <div id="interfaces-info" hx-get="/get-interfaces_info"  hx-trigger="load">
     <!-- interfaces info table -->
 </div>
+
+<dialog id="myDialog">
+    <button onclick="close_diag()">X</button>
+    <div id="update-from"></div>
+</dialog>
 {% endblock %}

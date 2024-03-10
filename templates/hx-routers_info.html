@@ -14,6 +14,7 @@
             <th>Router Name</th>
             <th>Router IP Address</th>
             <th>Router Technology</th>
+            <th>Netconf Connection</th>
             <th>Operations</th>
         </tr>
     </thead>
@@ -24,6 +25,7 @@
                 <td>{{router["router_name"]}}</td>
                 <td>{{router["router_ipaddress"]}}</td>
                 <td>{{router["router_technology"]}}</td>
+                <td>{{router["netconf_connection"]}}</td>
                 <td>
                     <button onclick="open_diag()" hx-target="#update-from" hx-swap="innerHTML" hx-get="/edit-router_info?id={{router['id']}}">Edit</button>
                     <button hx-target="#router-info" hx-delete="/delete-router_info?id={{router['id']}}">Delete</button>

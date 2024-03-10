@@ -1,0 +1,27 @@
+<form>
+    <label for="router_name">Router Name:</label>    
+    <input type="text" id="router_name" name="router_name" value="{{interface_info['router_name']}}"/>
+    <br/>
+    <label for="router_name">Router Name:</label>    
+    <input type="text" id="router_technology" name="router_technology" value="{{interface_info['router_technology']}}"/>
+    <br/>
+    <label for="interface_name">Interface Name:</label>    
+    <input type="text" id="interface_name" name="interface_name" value="{{interface_info['interface_name']}}"/>
+    <br/>
+     <label for="description">Description:</label>    
+    <input type="text" id="description" name="description" value="{{interface_info['description']}}"/>
+    <br/>
+    <label for="admin_state">Admin State:</label>    
+    <select id="admin_state" name="admin_state">
+        <option value="false">shutdown</option>
+        <option value="true">up</option>
+    </select>
+    <br/>
+    <label for="ipaddress">IP address:</label>    
+    <input type="text" name="ipaddress" id="ipaddress" value="{{interface_info['ipaddress']}}"/>
+    <br/>
+    <label for="mask">Mask:</label>
+    <input type="text" name="mask" id="mask" value="{{interface_info['mask']}}"/>
+    <br/>
+    <button onclick="close_diag()" hx-post="/interfaces/edite">Edit</button>
+</form>
