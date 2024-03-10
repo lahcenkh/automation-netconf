@@ -1,7 +1,7 @@
 from flask import Flask, url_for, render_template, request, flash, redirect, Response
 from database.db_functions import *
 from utils.forms import Add_router_form
-from utils.get_interfaces import get_routers_interfaces_state
+from utils.get_interfaces import get_routers_interfaces_state, get_router_interface_info
 from utils.gen_conf_template.template_generator import cisco_interface_basic_config, huawei_interface_basic_config
 from utils.configure_interface import edit_interface_config
 from utils.cirde_to_mask import *
@@ -143,8 +143,10 @@ def edit_interfaces_info():
             template = cisco_interface_basic_config(interface_info)
             result = edit_interface_config(router_ipaddress=router["router_ipaddress"],port=830 , router_technology=router["router_technology"],username="lahcen", password="Netconf@2021",template=template)
 
-        if "<ok/>" == result:
+        if "<ok/>" in str(result):
             print("ok")
+            inter = get_router_interface_info(router,new_interface_info.get("interface_name"))
+            print(inter)
         else:
             print(result)
 
