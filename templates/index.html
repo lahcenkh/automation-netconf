@@ -19,8 +19,10 @@
 {% endblock page_title %}
 
 {% block content %}
-    <p>Home page</p>
-    <br>
+    <h1>
+        manage routers using NETCONF
+    </h1>
+    <!-- <br>
     {% if data %}
         {{data}}
     {% else %}
@@ -30,6 +32,6 @@
             {{form_generator(form.router_ipaddress)}}
             {{form_generator(form.router_technology)}}
             {{form.submit()}}
-        </form>
+        </form> -->
     {% endif %}
 {% endblock %}

@@ -5,4 +5,7 @@ def cidr_to_netmask(cidr):
         return cidr
 
 def netmask_to_cidr(netmask):
-    return sum([bin(int(bits)).count("1") for bits in netmask.split(".")])
+    if "None" not in netmask:
+        return sum([bin(int(bits)).count("1") for bits in netmask.split(".")])
+    else:
+        return netmask

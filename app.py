@@ -127,7 +127,7 @@ def edit_interfaces_info():
                                 "interface_name":new_interface_info.get("interface_name"),
                                 "description":new_interface_info.get("description"),
                                 "ipaddress":new_interface_info.get("ipaddress"),
-                                "mask": cidr_to_netmask(new_interface_info.get("mask")),
+                                "mask": netmask_to_cidr(new_interface_info.get("mask")),
                                 "enabled":str(new_interface_info.get("admin_state")),
                             }
             template = huawei_interface_basic_config(interface_info)

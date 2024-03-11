@@ -2,20 +2,21 @@ from ncclient import manager
 import xmltodict
 from pprint import pprint
 
-def interfaces_status(router_ipaddress,router_technology,port,username,password, filter_interfaces):
+def interfaces_status(router_ipaddress,router_technology,port,username,password, filter_interfaces, netconf_connection):
     try:
         if str(router_technology).lower() == "huawei".lower():
+            print(f"|--------------conncting to Router: {router_ipaddress}")
             m = manager.connect(
                 host=router_ipaddress,
                 port=port,
                 username=username,
                 password=password,
                 hostkey_verify=False,
-                device_params={'name': "huaweiyang"},
+                device_params={'name': netconf_connection},
                 allow_agent=False,
                 look_for_keys=False
             )
-            print(f"|--------------conncting to Router: {router_ipaddress}")
+            
             reply = m.get(filter_interfaces).data_xml
             
             data_inter_dict = xmltodict.parse(reply)
@@ -42,19 +43,31 @@ def interfaces_status(router_ipaddress,router_technology,port,username,password,
             return interfaces_huawei
         
         elif str(router_technology).lower() == "cisco".lower():
-            m = manager.connect(
-                host=router_ipaddress,
-                port=port,
-                username=username,
-                password=password,
-                hostkey_verify=False,
-                device_params={'name': "csr"},
-                timeout=700,
-            )
             print(f"|--------------conncting to Router: {router_ipaddress}")
+            if netconf_connection == "csr":
+                m = manager.connect(
+                    host=router_ipaddress,
+                    port=port,
+                    username=username,
+                    password=password,
+                    hostkey_verify=False,
+                    device_params={'name': netconf_connection},
+                    timeout=700,
+                )
+            elif netconf_connection == "iosxr":
+                m = manager.connect(
+                    host=router_ipaddress,
+                    port=port,
+                    username="admin",
+                    password="C1sco12345",
+                    hostkey_verify=False,
+                    device_params={'name': netconf_connection},
+                    timeout=700,
+                    allow_agent=False,
+                    look_for_keys=False
+                )
             reply = m.get(filter_interfaces).data_xml
             data_inter_dict = xmltodict.parse(reply)
-            
             interfaces_cisco = {}
             for interface in data_inter_dict["data"]["interfaces"]["interface"]:
                 if interface.get("name") not in interfaces_cisco:
@@ -210,7 +223,7 @@ def get_routers_interfaces_state(routers):
                             </ifm>
                             </filter>
                             """
-            result = interfaces_status(router_ipaddress=router["router_ipaddress"], router_technology=router["router_technology"], port=22,username="lahcen", password="Netconf@2021", filter_interfaces=filter_interfaces)
+            result = interfaces_status(router_ipaddress=router["router_ipaddress"], router_technology=router["router_technology"], port=22,username="lahcen", password="Netconf@2021", filter_interfaces=filter_interfaces, netconf_connection=router["netconf_connection"])
         elif router["router_technology"].lower() == "CISCO".lower():
             filter_interfaces = """
                                 <filter xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
@@ -223,7 +236,7 @@ def get_routers_interfaces_state(routers):
                                     </interfaces-state>
                                 </filter>
                                 """
-            result = interfaces_status(router_ipaddress=router["router_ipaddress"], router_technology=router["router_technology"], port=830,username="lahcen", password="Netconf@2021", filter_interfaces=filter_interfaces)
+            result = interfaces_status(router_ipaddress=router["router_ipaddress"], router_technology=router["router_technology"], port=830,username="lahcen", password="Netconf@2021", filter_interfaces=filter_interfaces, netconf_connection=router["netconf_connection"])
         else:
             result = "Not supported"
         if "Error" not in result:

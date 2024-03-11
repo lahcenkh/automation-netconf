@@ -15,11 +15,13 @@ hx-trigger="click"
 hx-target="#interfaces-info"
 hx-indicator="#loading"
 hx-vals='{"limit": 0.2}'>get interfaces info</button>
-<br>
-<span class="htmx-indicator" id="loading">
-    <p>waiting...</p><br>
-    <img class="loading-gif" src="{{ url_for('static', filename='waiting.gif') }}" width="30px" height="30px">
-</span>
+
+<div class="waiting-update">
+    <span class="htmx-indicator" id="loading">
+        <img class="loading-gif" src="{{ url_for('static', filename='waiting.gif') }}" width="30px" height="30px">
+    </span>
+</div>
+
 {% with messages = get_flashed_messages() %}
 {% if messages %}
     <div id="flash-messages">
